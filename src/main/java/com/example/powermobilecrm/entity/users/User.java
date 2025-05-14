@@ -13,7 +13,9 @@ import java.util.List;
 @Table(name = "users")
 @NoArgsConstructor
 @AllArgsConstructor
-@Data
+@Getter
+@Setter
+@ToString(exclude = "vehicles")
 @EqualsAndHashCode(of = "id")
 public class User {
 

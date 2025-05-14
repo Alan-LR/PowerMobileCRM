@@ -1,5 +1,6 @@
 package com.example.powermobilecrm.entity.vehicle;
 
+import com.example.powermobilecrm.dto.vehicle.VehicleRequestDTO;
 import com.example.powermobilecrm.entity.users.User;
 import jakarta.persistence.*;
 import lombok.*;
@@ -12,7 +13,9 @@ import java.time.LocalDateTime;
 @Table(name = "vehicles")
 @NoArgsConstructor
 @AllArgsConstructor
-@Data
+@Getter
+@Setter
+@ToString(exclude = "user")
 @EqualsAndHashCode(of = "id")
 public class Vehicle {
 
@@ -35,4 +38,10 @@ public class Vehicle {
     @ManyToOne(fetch = FetchType.LAZY)
     @JoinColumn(name = "user_id")
     private User user;
+
+    public Vehicle(VehicleRequestDTO data){
+        this.plate = data.plate();
+        this.advertisedPrice = data.advertisedPrice();
+        this.year = data.year();
+    }
 }

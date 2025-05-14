@@ -24,7 +24,7 @@ public class UserService {
     }
 
     @Transactional
-    public UserResponseDTO create(UserRequestDTO data) {
+    public UserResponseDTO createUser(UserRequestDTO data) {
         User user = new User(data);
         user.setStatus(UserStatus.ACTIVE);
         return new UserResponseDTO(repository.save(user));
