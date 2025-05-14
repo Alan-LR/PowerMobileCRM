@@ -1,6 +1,8 @@
 package com.example.powermobilecrm.entity.vehicle;
 
 import com.example.powermobilecrm.dto.vehicle.VehicleRequestDTO;
+import com.example.powermobilecrm.entity.brand.Brand;
+import com.example.powermobilecrm.entity.model.Model;
 import com.example.powermobilecrm.entity.users.User;
 import jakarta.persistence.*;
 import lombok.*;
@@ -38,6 +40,17 @@ public class Vehicle {
     @ManyToOne(fetch = FetchType.LAZY)
     @JoinColumn(name = "user_id")
     private User user;
+
+    @ManyToOne(fetch = FetchType.LAZY)
+    @JoinColumn(name = "brand_id", nullable = false)
+    private Brand brand;
+
+    @ManyToOne(fetch = FetchType.LAZY)
+    @JoinColumn(name = "model_id", nullable = false)
+    private Model model;
+
+    @Column(name = "fipe_price")
+    private BigDecimal fipePrice;
 
     public Vehicle(VehicleRequestDTO data){
         this.plate = data.plate();

@@ -13,6 +13,7 @@ import org.springframework.web.server.ResponseStatusException;
 import java.time.LocalDateTime;
 import java.util.List;
 import java.util.Objects;
+import java.util.Optional;
 
 @Service
 public class UserService {
@@ -32,6 +33,12 @@ public class UserService {
 
     public List<UserResponseDTO> getAllUsers() {
         return repository.findAll().stream().map(UserResponseDTO::new).toList();
+    }
+
+    public UserResponseDTO getUser(Long id){
+        Optional<User> userOptional = repository.findById(id);
+        User user = userOptional.orElseThrow(() -> new ResponseStatusException(HttpStatus.NOT_FOUND, "Usuário não encontrado"));
+        return new UserResponseDTO(user);
     }
 
     @Transactional

@@ -1,5 +1,6 @@
 package com.example.powermobilecrm.controller;
 
+import com.example.powermobilecrm.dto.users.UserResponseDTO;
 import com.example.powermobilecrm.dto.vehicle.VehicleRequestDTO;
 import com.example.powermobilecrm.dto.vehicle.VehicleResponseDTO;
 import com.example.powermobilecrm.service.VehicleService;
@@ -30,6 +31,12 @@ public class VehicleController {
     public ResponseEntity<List<VehicleResponseDTO>> getAllVehicles(){
         List<VehicleResponseDTO> vehicles = service.getAllVehicles();
         return ResponseEntity.ok(vehicles);
+    }
+
+    @GetMapping("/{id}")
+    public ResponseEntity<VehicleResponseDTO> getVehicle(@PathVariable Long id){
+        VehicleResponseDTO vehicle = service.getVehicle(id);
+        return ResponseEntity.ok(vehicle);
     }
 
     @PutMapping("/{id}")

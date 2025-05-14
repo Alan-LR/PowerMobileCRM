@@ -1,5 +1,6 @@
 package com.example.powermobilecrm.service;
 
+import com.example.powermobilecrm.dto.users.UserResponseDTO;
 import com.example.powermobilecrm.dto.vehicle.VehicleRequestDTO;
 import com.example.powermobilecrm.dto.vehicle.VehicleResponseDTO;
 import com.example.powermobilecrm.entity.users.User;
@@ -12,6 +13,7 @@ import org.springframework.stereotype.Service;
 import org.springframework.web.server.ResponseStatusException;
 
 import java.util.List;
+import java.util.Optional;
 
 @Service
 public class VehicleService {
@@ -41,6 +43,12 @@ public class VehicleService {
 
     public List<VehicleResponseDTO> getAllVehicles() {
         return repository.findAll().stream().map(VehicleResponseDTO::new).toList();
+    }
+
+    public VehicleResponseDTO getVehicle(Long id){
+        Optional<Vehicle> vehicleOptional = repository.findById(id);
+        Vehicle vehicle = vehicleOptional.orElseThrow(() -> new ResponseStatusException(HttpStatus.NOT_FOUND, "Veículo não encontrado"));
+        return new VehicleResponseDTO(vehicle);
     }
 
     @Transactional
