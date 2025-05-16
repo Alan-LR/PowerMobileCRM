@@ -98,7 +98,7 @@ public class VehicleService {
                 });
     }
 
-    public User findUser(Long id){
+    public User findUser(Long id) {
         return userRepository.findById(id)
                 .orElseThrow(() -> new ResponseStatusException(HttpStatus.NOT_FOUND, "Usuário não encontrado"));
     }
@@ -107,7 +107,7 @@ public class VehicleService {
         return repository.findAll().stream().map(VehicleResponseDTO::new).toList();
     }
 
-    public VehicleResponseDTO getVehicle(Long id){
+    public VehicleResponseDTO getVehicle(Long id) {
         Optional<Vehicle> vehicleOptional = repository.findById(id);
         Vehicle vehicle = vehicleOptional.orElseThrow(() -> new ResponseStatusException(HttpStatus.NOT_FOUND, "Veículo não encontrado"));
         return new VehicleResponseDTO(vehicle);
@@ -115,21 +115,30 @@ public class VehicleService {
 
     @Transactional
     public VehicleResponseDTO updateVehicle(Long id, VehicleRequestDTO data) {
-        return repository.findById(id)
-                .map(existingVehicle -> {
-                    User user = findUser(data.userId());
-                    findPlate(data.plate(), id);
-
-                    existingVehicle.setPlate(data.plate());
-                    existingVehicle.setAdvertisedPrice(data.advertisedPrice());
-                    existingVehicle.setYear(data.year());
-                    existingVehicle.setUser(user);
-
-                    return new VehicleResponseDTO(repository.save(existingVehicle));
-                })
+        Vehicle existingVehicle = repository.findById(id)
                 .orElseThrow(() -> new ResponseStatusException(HttpStatus.NOT_FOUND, "Veículo não encontrado"));
-    }
 
+        findPlate(data.plate(), id);
+
+        User user = null;
+        if (Objects.nonNull(data.userId())) {
+            user = findUser(data.userId());
+        }
+
+        Brand brand = getOrCreateBrand(data.brandId());
+        Model model = getOrCreateModel(data.modelId(), data.brandId(), brand);
+
+        validateFipeData(data.brandId(), data.modelId(), data.yearFipeCode());
+
+        existingVehicle.setPlate(data.plate());
+        existingVehicle.setAdvertisedPrice(data.advertisedPrice());
+        existingVehicle.setYear(data.year());
+        existingVehicle.setUser(user);
+        existingVehicle.setBrand(brand);
+        existingVehicle.setModel(model);
+
+        return new VehicleResponseDTO(repository.save(existingVehicle));
+    }
 
     public Boolean deleteVehicle(Long id) {
         if (repository.existsById(id)) {
