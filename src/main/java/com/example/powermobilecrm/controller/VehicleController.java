@@ -1,6 +1,5 @@
 package com.example.powermobilecrm.controller;
 
-import com.example.powermobilecrm.dto.users.UserResponseDTO;
 import com.example.powermobilecrm.dto.vehicle.VehicleRequestDTO;
 import com.example.powermobilecrm.dto.vehicle.VehicleResponseDTO;
 import com.example.powermobilecrm.service.VehicleService;

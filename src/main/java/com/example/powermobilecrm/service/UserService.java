@@ -18,6 +18,10 @@ import java.util.Optional;
 @Service
 public class UserService {
 
+    public static final String USER_NOT_FOUND = "Usuário não encontrado";
+    public static final String STATUS_NOT_FOUND = "Status inválido. Use ACTIVE ou INACTIVE.";
+
+
     private UserRepository repository;
 
     public UserService(UserRepository repository) {
@@ -37,7 +41,7 @@ public class UserService {
 
     public UserResponseDTO getUser(Long id){
         Optional<User> userOptional = repository.findById(id);
-        User user = userOptional.orElseThrow(() -> new ResponseStatusException(HttpStatus.NOT_FOUND, "Usuário não encontrado"));
+        User user = userOptional.orElseThrow(() -> new ResponseStatusException(HttpStatus.NOT_FOUND, USER_NOT_FOUND));
         return new UserResponseDTO(user);
     }
 
@@ -59,14 +63,14 @@ public class UserService {
                     }
 
                     return new UserResponseDTO(repository.save(existingUser));
-                }).orElseThrow(() -> new ResponseStatusException(HttpStatus.NOT_FOUND, "Usuário não encontrado"));
+                }).orElseThrow(() -> new ResponseStatusException(HttpStatus.NOT_FOUND, USER_NOT_FOUND));
     }
 
     private UserStatus parseStatus(String status) {
         try {
             return UserStatus.valueOf(status.toUpperCase());
         } catch (IllegalArgumentException e) {
-            throw new ResponseStatusException(HttpStatus.BAD_REQUEST, "Status inválido. Use ACTIVE ou INACTIVE.");
+            throw new ResponseStatusException(HttpStatus.BAD_REQUEST, STATUS_NOT_FOUND);
         }
     }
 
@@ -82,5 +86,10 @@ public class UserService {
         return repository.findByCreatedAtBetween(start, end).stream()
                 .map(UserResponseDTO::new)
                 .toList();
+    }
+
+    public User findUser(Long id) {
+        return repository.findById(id)
+                .orElseThrow(() -> new ResponseStatusException(HttpStatus.NOT_FOUND, USER_NOT_FOUND));
     }
 }

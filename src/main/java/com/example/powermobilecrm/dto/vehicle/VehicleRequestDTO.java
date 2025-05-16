@@ -1,6 +1,5 @@
 package com.example.powermobilecrm.dto.vehicle;
 
-import com.example.powermobilecrm.entity.users.User;
 import jakarta.validation.constraints.NotBlank;
 import jakarta.validation.constraints.NotNull;
 

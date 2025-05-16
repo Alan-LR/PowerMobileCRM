@@ -1,6 +1,5 @@
 package com.example.powermobilecrm.dto.users;
 
-import lombok.Builder;
 import jakarta.validation.constraints.*;
 import org.hibernate.validator.constraints.br.CPF;
 

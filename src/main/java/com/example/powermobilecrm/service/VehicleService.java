@@ -10,7 +10,6 @@ import com.example.powermobilecrm.entity.vehicle.Vehicle;
 import com.example.powermobilecrm.messaging.VehicleFipeProducer;
 import com.example.powermobilecrm.repository.BrandRepository;
 import com.example.powermobilecrm.repository.ModelRepository;
-import com.example.powermobilecrm.repository.UserRepository;
 import com.example.powermobilecrm.repository.VehicleRepository;
 import jakarta.transaction.Transactional;
 import org.springframework.http.HttpStatus;
@@ -24,20 +23,23 @@ import java.util.Optional;
 @Service
 public class VehicleService {
 
+    public static final String VEHICLE_NOT_FOUND = "Veículo não encontrado";
+    public static final String VEHICLE_PLATE_ALREADY_EXISTS = "Já existe um veículo com essa placa.";
+
     private VehicleRepository repository;
-    private UserRepository userRepository;
     private VehicleFipeProducer vehicleFipeProducer;
     private FipeService fipeService;
     private BrandRepository brandRepository;
     private ModelRepository modelRepository;
+    private UserService userService;
 
-    public VehicleService(VehicleRepository vehicleRepository, UserRepository userRepository, VehicleFipeProducer vehicleFipeProducer, FipeService fipeService, BrandRepository brandRepository, ModelRepository modelRepository) {
+    public VehicleService(VehicleRepository vehicleRepository, VehicleFipeProducer vehicleFipeProducer, FipeService fipeService, BrandRepository brandRepository, ModelRepository modelRepository, UserService userService) {
         this.repository = vehicleRepository;
-        this.userRepository = userRepository;
         this.vehicleFipeProducer = vehicleFipeProducer;
         this.fipeService = fipeService;
         this.brandRepository = brandRepository;
         this.modelRepository = modelRepository;
+        this.userService = userService;
     }
 
     @Transactional
@@ -45,7 +47,7 @@ public class VehicleService {
         existsPlate(data.plate());
         User user = null;
         if (Objects.nonNull(data.userId())) {
-            user = findUser(data.userId());
+            user = userService.findUser(data.userId());
         }
 
         Brand brand = getOrCreateBrand(data.brandId());
@@ -98,31 +100,26 @@ public class VehicleService {
                 });
     }
 
-    public User findUser(Long id) {
-        return userRepository.findById(id)
-                .orElseThrow(() -> new ResponseStatusException(HttpStatus.NOT_FOUND, "Usuário não encontrado"));
-    }
-
     public List<VehicleResponseDTO> getAllVehicles() {
         return repository.findAll().stream().map(VehicleResponseDTO::new).toList();
     }
 
     public VehicleResponseDTO getVehicle(Long id) {
         Optional<Vehicle> vehicleOptional = repository.findById(id);
-        Vehicle vehicle = vehicleOptional.orElseThrow(() -> new ResponseStatusException(HttpStatus.NOT_FOUND, "Veículo não encontrado"));
+        Vehicle vehicle = vehicleOptional.orElseThrow(() -> new ResponseStatusException(HttpStatus.NOT_FOUND, VEHICLE_NOT_FOUND));
         return new VehicleResponseDTO(vehicle);
     }
 
     @Transactional
     public VehicleResponseDTO updateVehicle(Long id, VehicleRequestDTO data) {
         Vehicle existingVehicle = repository.findById(id)
-                .orElseThrow(() -> new ResponseStatusException(HttpStatus.NOT_FOUND, "Veículo não encontrado"));
+                .orElseThrow(() -> new ResponseStatusException(HttpStatus.NOT_FOUND, VEHICLE_NOT_FOUND));
 
         findPlate(data.plate(), id);
 
         User user = null;
         if (Objects.nonNull(data.userId())) {
-            user = findUser(data.userId());
+            user = userService.findUser(data.userId());
         }
 
         Brand brand = getOrCreateBrand(data.brandId());
@@ -150,7 +147,7 @@ public class VehicleService {
 
     public void existsPlate(String plate) {
         if (repository.existsByPlate(plate)) {
-            throw new ResponseStatusException(HttpStatus.CONFLICT, "Já existe um veículo com essa placa.");
+            throw new ResponseStatusException(HttpStatus.CONFLICT, VEHICLE_PLATE_ALREADY_EXISTS);
         }
     }
 
@@ -158,7 +155,7 @@ public class VehicleService {
         repository.findByPlate(plate)
                 .filter(v -> !v.getId().equals(id))
                 .ifPresent(v -> {
-                    throw new ResponseStatusException(HttpStatus.CONFLICT, "Já existe um veículo com essa placa.");
+                    throw new ResponseStatusException(HttpStatus.CONFLICT, VEHICLE_PLATE_ALREADY_EXISTS);
                 });
     }
 }

@@ -27,6 +27,7 @@ class VehicleServiceTest {
     private FipeService fipeService;
     private BrandRepository brandRepository;
     private ModelRepository modelRepository;
+    private UserService userService;
 
     @BeforeEach
     void setUp() {
@@ -36,9 +37,10 @@ class VehicleServiceTest {
         fipeService = mock(FipeService.class);
         brandRepository = mock(BrandRepository.class);
         modelRepository = mock(ModelRepository.class);
+        userService = mock(UserService.class);
 
-        vehicleService = new VehicleService(vehicleRepository, userRepository, vehicleFipeProducer,
-                fipeService, brandRepository, modelRepository);
+        vehicleService = new VehicleService(vehicleRepository, vehicleFipeProducer,
+                fipeService, brandRepository, modelRepository, userService);
     }
 
     @Test
