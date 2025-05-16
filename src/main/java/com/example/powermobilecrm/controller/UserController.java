@@ -3,6 +3,7 @@ package com.example.powermobilecrm.controller;
 import com.example.powermobilecrm.dto.users.UserRequestDTO;
 import com.example.powermobilecrm.dto.users.UserResponseDTO;
 import com.example.powermobilecrm.service.UserService;
+import io.swagger.v3.oas.annotations.Parameter;
 import jakarta.validation.Valid;
 import org.springframework.format.annotation.DateTimeFormat;
 import org.springframework.http.HttpStatus;
@@ -56,8 +57,21 @@ public class UserController {
 
     @GetMapping("/search")
     public ResponseEntity<List<UserResponseDTO>> searchByCreatedAtRange(
-            @RequestParam @DateTimeFormat(iso = DateTimeFormat.ISO.DATE) LocalDate start,
-            @RequestParam @DateTimeFormat(iso = DateTimeFormat.ISO.DATE) LocalDate end) {
+            @Parameter(
+                    description = "Data inicial no formato yyyy-MM-dd",
+                    example = "2025-05-10"
+            )
+            @RequestParam
+            @DateTimeFormat(iso = DateTimeFormat.ISO.DATE)
+            LocalDate start,
+
+            @Parameter(
+                    description = "Data final no formato yyyy-MM-dd",
+                    example = "2025-05-15"
+            )
+            @RequestParam
+            @DateTimeFormat(iso = DateTimeFormat.ISO.DATE)
+            LocalDate end) {
 
         LocalDateTime startDateTime = start.atStartOfDay();
         LocalDateTime endDateTime = end.atTime(LocalTime.MAX);
@@ -65,6 +79,5 @@ public class UserController {
         List<UserResponseDTO> result = service.findByCreatedAtBetween(startDateTime, endDateTime);
         return ResponseEntity.ok(result);
     }
-
 
 }
