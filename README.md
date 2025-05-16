@@ -74,7 +74,7 @@ Rodar a aplicação:
 
 A aplicação estará disponível em 
   
-    http://localhost:8080    
+    http://localhost:8080
 
 Acessar os endpoints:
 Swagger UI:
