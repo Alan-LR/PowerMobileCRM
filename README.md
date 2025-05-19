@@ -35,6 +35,7 @@ O **PowerCRM** é um sistema simples de gerenciamento de **usuários** e **veíc
  - O projeto já está configurado com Flyway para versionamento de schema do banco.
  - O cache é feito com @Cacheable nos métodos do serviço FIPE para evitar chamadas desnecessárias.
  - A fila do RabbitMQ simula o envio assíncrono da consulta de preço FIPE, permitindo desacoplamento entre serviços.
+ - Foi utilizado o chatGpt para checar como utilizar RabbitMQ e suas funcionalidades.
 
 ## 🧩 Estrutura do Projeto
 
